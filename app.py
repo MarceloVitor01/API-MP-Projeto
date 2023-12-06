@@ -97,7 +97,7 @@ def atualiza_usuario(id_usuario):
 def deleta_usuario(id_usuario):
     '''Deleta um usuario com base no id_usuario'''
     usuario_objeto = usuarios.query.filter_by(id_usuario = id_usuario).first()
-    if usuarios.funcao == "ADM"
+    # if usuarios.funcao == "ADM":
     try:
         db.session.delete(usuario_objeto)
         db.session.commit()
