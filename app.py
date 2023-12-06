@@ -15,10 +15,10 @@ db = SQLAlchemy(app)
 class usuarios(db.Model):
     '''Classe que define a tabela usuarios do BD'''
     id_usuario = db.Column(db.Integer, primary_key = True)
-    nome_usuario = db.Column(db.String(100))
-    funcao = db.Column(db.String(100))
-    login = db.Column(db.String(100))
-    senha = db.Column(db.String(100))
+    nome_usuario = db.Column(db.String(98))
+    funcao = db.Column(db.String(98))
+    login = db.Column(db.String(98))
+    senha = db.Column(db.String(98))
 
     def to_json(self):
         '''Retorna um usuario no formato json'''
@@ -97,7 +97,7 @@ def atualiza_usuario(id_usuario):
 def deleta_usuario(id_usuario):
     '''Deleta um usuario com base no id_usuario'''
     usuario_objeto = usuarios.query.filter_by(id_usuario = id_usuario).first()
-
+    # if usuarios.funcao == "ADM":
     try:
         db.session.delete(usuario_objeto)
         db.session.commit()
@@ -466,7 +466,8 @@ def deleta_pesquisa_restaurante(id_pesquisa_restaurante):
         return jsonify(erro)
 
 
-
+    
+    
 #rotas de erro
 @app.errorhandler(404)
 def page_not_found(error):
