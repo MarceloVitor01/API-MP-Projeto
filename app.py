@@ -1,9 +1,11 @@
 from flask import Flask, jsonify, Response, request
 from flask_sqlalchemy import SQLAlchemy
 import mysql.connector as connector
+from flask_cors import CORS
 import json
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://doadmin:AVNS_erI8p2wSSm0gckO83UU@banco-de-dados-mp-do-user-15247043-0.c.db.ondigitalocean.com:25060/teste'
 
@@ -30,7 +32,7 @@ def seleciona_usuarios():
     usuarios_objetos = usuarios.query.all()
     usuarios_json = [usuario.to_json() for usuario in usuarios_objetos]
     
-    return jsonify({'Usuários': usuarios_json}, 'Todos os usuários listados')
+    return jsonify(usuarios_json)
 
 #Seleciona um usuário com base no id_usuario
 @app.route('/usuario/<id_usuario>', methods=['GET'])
