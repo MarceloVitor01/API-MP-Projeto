@@ -148,7 +148,7 @@ def cria_produto():
     try:
         produto_objeto = produtos(nome_produto = body['nome_produto'], fk_id_restaurante = body['fk_id_restaurante'])
         db.session.add(produto_objeto)
-        db.commit()
+        db.session.commit()
         produto_json = produto_objeto.to_json()
 
         return jsonify(produto_json)
@@ -156,7 +156,7 @@ def cria_produto():
     except Exception as erro:
         return jsonify(erro)
     
-@app.route('/produto/<id_produto>', methods = ['SET'])
+@app.route('/produto/<id_produto>', methods = ['PUT'])
 def atualiza_produto(id_produto):
     '''Atualiza um produto com base no id_produto'''
     produto_objeto = produtos.query.filter_by(id_produto = id_produto).first()
@@ -235,9 +235,9 @@ def cria_restaurante():
     body = request.get_json()
 
     try:
-        restaurante_objeto = restaurantes(nome_restaurante = body['nome_restaurante'], fk_id_restaurante = body['fk_id_restaurante'])
+        restaurante_objeto = restaurantes(nome_restaurante = body['nome_restaurante'], distancia_totem = body['distancia_totem'])
         db.session.add(restaurante_objeto)
-        db.commit()
+        db.session.commit()
         restaurante_json = restaurante_objeto.to_json()
 
         return jsonify(restaurante_json)
@@ -245,7 +245,7 @@ def cria_restaurante():
     except Exception as erro:
         return jsonify(erro)
     
-@app.route('/restaurante/<id_restaurante>', methods = ['SET'])
+@app.route('/restaurante/<id_restaurante>', methods = ['PUT'])
 def atualiza_restaurante(id_restaurante):
     '''Atualiza um restaurante com base no id_restaurante'''
     restaurante_objeto = restaurantes.query.filter_by(id_restaurante = id_restaurante).first()
@@ -270,7 +270,7 @@ def atualiza_restaurante(id_restaurante):
     except Exception as erro:
         return jsonify(erro)
     
-@app.route('/restaurante/<id_restaurante>')
+@app.route('/restaurante/<id_restaurante>', methods = ['DELETE'])
 def deleta_restaurante(id_restaurante):
     '''Deleta um restaurante com base no id_restaurante'''
     restaurante_objeto = restaurantes.query.filter_by(id_restaurante = id_restaurante).first()
@@ -327,7 +327,7 @@ def cria_pesquisa_produto():
     try:
         pesquisa_produto_objeto = pesquisas_produto(fk_id_usuario = body['fk_id_usuario'], fk_id_produto = body['fk_id_produto'])
         db.session.add(pesquisa_produto_objeto)
-        db.commit()
+        db.session.commit()
         pesquisa_produto_json = pesquisa_produto_objeto.to_json()
 
         return jsonify(pesquisa_produto_json)
@@ -416,7 +416,7 @@ def cria_pesquisa_restaurante():
     try:
         pesquisa_restaurante_objeto = pesquisas_restaurante(fk_id_usuario = body['fk_id_usuario'], fk_id_restaurante = body['fk_id_restaurante'])
         db.session.add(pesquisa_restaurante_objeto)
-        db.commit()
+        db.session.commit()
         pesquisa_restaurante_json = pesquisa_restaurante_objeto.to_json()
 
         return jsonify(pesquisa_restaurante_json)
