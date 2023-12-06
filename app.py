@@ -114,7 +114,8 @@ class produtos(db.Model):
     '''Classe que define a tabela produtos do BD'''
     id_produto = db.Column(db.Integer, primary_key = True)
     nome_produto = db.Column(db.String(100))
-    fk_id_restaurante = db.Column(db.Integer)
+    fk_id_restaurante = db.Column(db.Integer, db.ForeignKey('restaurantes.id_restaurante'))
+    restaurante = db.relationship('restaurantes', backref = 'produtos', foreign_keys = [fk_id_restaurante])
 
     def to_json(self):
         '''Retorna um produto no formato json'''
