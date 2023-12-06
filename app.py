@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, Response, request
+from flask import Flask, jsonify, Response, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 import mysql.connector as connector
 from flask_cors import CORS
@@ -102,5 +102,10 @@ def deleta_usuario(id_usuario):
     except Exception as erro:
         return jsonify({'Usuário: '}, 'Erro ao deletar usuário')
     
+#rotas de erro
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('page_not_found.html')
+
 
 app.run()
