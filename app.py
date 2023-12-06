@@ -132,7 +132,22 @@ def seleciona_produto(id_produto):
     produto_json = produto_objeto.to_json()
 
     return jsonify(produto_json)
+
+@app.route('/produtos', methods = ['POST'])
+def cria_produto():
+    body = request.get_json()
+
+    try:
+        produto_objeto = produtos(nome_produto = body['nome_produto'], fk_id_restaurante = body['fk_id_restaurante'])
+        db.session.add(produto_objeto)
+        db.commit()
+        produto_json = produto_objeto.to_json()
+
+        return jsonify(produto_json)
     
+    except Exception as erro:
+        return jsonify()
+
 #rotas de erro
 @app.errorhandler(404)
 def page_not_found(error):
