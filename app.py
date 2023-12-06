@@ -9,45 +9,96 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://doadmin:AVNS_erI8p2wSSm0gckO83U
 
 db = SQLAlchemy(app)
 
-class teste(db.Model):
-    id_teste = db.Column(db.Integer, primary_key = True)
-    nome = db.Column(db.String(50))
-    email = db.Column(db.String(50), unique=True)
+class usuarios(db.Model):
+    id_usuario = db.Column(db.Integer, primary_key = True)
+    nome_usuario = db.Column(db.String(100))
+    funcao = db.Column(db.String(100))
+    login = db.Column(db.String(100))
+    senha = db.Column(db.String(100))
 
     def to_json(self):
-        return {'ID': self.id_teste, 'nome': self.nome, 'email': self.email}
-
-#Seleciona todos
-@app.route('/testes', methods=['GET'])
-def seleciona_testes():
-    testes_objetos = teste.query.all()
-    testes_json = [teste.to_json() for teste in testes_objetos]
+        return {'id_usuario': self.id_usuario,
+                'nome_usuario': self.nome_usuario,
+                'funcao': self.funcao,
+                'login': self.login,
+                'senha': self.senha
+                }
     
-    return jsonify({'testes': testes_json}, 'ok')
-
-#Seleciona por ID
-@app.route('/teste/<id_teste>', methods=['GET'])
-def seleciona_teste(id_teste):
-    teste_objeto = teste.query.filter_by(id_teste=id_teste).first()
-    teste_json = teste_objeto.to_json()
+#Seleciona todos os usuários
+@app.route('/usuarios', methods=['GET'])
+def seleciona_usuarios():
+    usuarios_objetos = usuarios.query.all()
+    usuarios_json = [usuario.to_json() for usuario in usuarios_objetos]
     
-    return jsonify({'teste': teste_json}, 'ok')
+    return jsonify({'Usuários': usuarios_json}, 'Todos os usuários listados')
 
+#Seleciona um usuário com base no id_usuario
+@app.route('/usuario/<id_usuario>', methods=['GET'])
+def seleciona_usuario(id_usuario):
+    usuario_objeto = usuarios.query.filter_by(id_usuario = id_usuario).first()
+    usuario_json = usuario_objeto.to_json()
+    
+    return jsonify({'Usuários': usuario_json}, f'O usuário com id {id_usuario} foi listado')
 
-@app.route('/teste', methods=['POST'])
-def cria_teste():
+#Cria um usuário
+@app.route('/usuarios', methods=['POST'])
+def cria_usuario():
     body = request.get_json()
 
     try:
-        teste = teste(nome = body['nome'], email = body['email'])
-        db.session.add(teste)
+        usuario_objeto = usuarios(nome_usuario = body['nome_usuario'], funcao = body['funcao'], login = body['login'], senha = body['senha'])
+        db.session.add(usuario_objeto)
         db.session.commit()
 
-        return jsonify({'teste': teste.to_json()}, 'Criado com sucesso!')
+        return jsonify({'Usuários': usuario_objeto.to_json()}, 'Usuário adicionado com sucesso')
     
     except Exception as erro:
-        print(erro)
-
-        return jsonify({''}, 'Erro ao cadastrar')
+        return jsonify({'Usuário: '}, 'Erro ao criar usuário')
     
+#Atualiza um usuário com base no id_usuario
+@app.route('/usuario/<id_usuario>', methods = ['PUT'])    
+def atualiza_usuario(id_usuario):
+    usuario_objeto = usuarios.query.filter_by(id_usuario = id_usuario).first()
+    body = request.get_json()
+
+    try:
+        if('id_usuario' in body):
+            usuario_objeto.id_usuario = body['id_usuario']
+
+        if('nome_usuario' in body):
+            usuario_objeto.nome_usuario = body['nome_usuario']
+
+        if('funcao' in body):
+            usuario_objeto.funcao = body['funcao']
+
+        if('login' in body):
+            usuario_objeto.login = body['login']
+
+        if('senha' in body):
+            usuario_objeto.senha = body['senha']
+
+        db.session.add(usuario_objeto)
+        db.session.commit()
+
+        return jsonify({'Usuário': usuario_objeto.to_json()}, 'Usuário atualizado com sucesso')
+    
+    except Exception as erro:
+        return jsonify({'Usuário: '}, 'Erro ao atualizar usuário')
+
+
+#Deleta um usuário com base no id_usuario
+@app.route('/usuario/<id_usuario>', methods = ['DELETE'])
+def deleta_usuario(id_usuario):
+    usuario_objeto = usuarios.query.filter_by(id_usuario = id_usuario).first()
+
+    try:
+        db.session.delete(usuario_objeto)
+        db.session.commit()
+
+        return jsonify({'Usuário': usuario_objeto.to_json()}, 'Usuário deletado com sucesso')
+    
+    except Exception as erro:
+        return jsonify({'Usuário: '}, 'Erro ao deletar usuário')
+    
+
 app.run()
