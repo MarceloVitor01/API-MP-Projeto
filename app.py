@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, Response, request
+from flask import Flask, jsonify, Response, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 import mysql.connector as connector
 from flask_cors import CORS
@@ -133,5 +133,10 @@ def seleciona_produto(id_produto):
 
     return jsonify(produto_json)
     
+#rotas de erro
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('page_not_found.html')
+
 
 app.run()
