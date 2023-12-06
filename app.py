@@ -40,7 +40,7 @@ def seleciona_usuario(id_usuario):
     usuario_objeto = usuarios.query.filter_by(id_usuario = id_usuario).first()
     usuario_json = usuario_objeto.to_json()
     
-    return jsonify({'Usuários': usuario_json}, f'O usuário com id {id_usuario} foi listado')
+    return jsonify(usuario_json)
 
 #Cria um usuário
 @app.route('/usuarios', methods=['POST'])
@@ -51,11 +51,12 @@ def cria_usuario():
         usuario_objeto = usuarios(nome_usuario = body['nome_usuario'], funcao = body['funcao'], login = body['login'], senha = body['senha'])
         db.session.add(usuario_objeto)
         db.session.commit()
+        usuario_json = usuario_objeto.to_json()
 
-        return jsonify({'Usuários': usuario_objeto.to_json()}, 'Usuário adicionado com sucesso')
+        return jsonify(usuario_json)
     
     except Exception as erro:
-        return jsonify({'Usuário: '}, 'Erro ao criar usuário')
+        return jsonify()
     
 #Atualiza um usuário com base no id_usuario
 @app.route('/usuario/<id_usuario>', methods = ['PUT'])    
@@ -81,11 +82,12 @@ def atualiza_usuario(id_usuario):
 
         db.session.add(usuario_objeto)
         db.session.commit()
+        usuario_json = usuario_objeto.to_json()
 
-        return jsonify({'Usuário': usuario_objeto.to_json()}, 'Usuário atualizado com sucesso')
+        return jsonify(usuario_json)
     
     except Exception as erro:
-        return jsonify({'Usuário: '}, 'Erro ao atualizar usuário')
+        return jsonify()
 
 
 #Deleta um usuário com base no id_usuario
@@ -96,11 +98,40 @@ def deleta_usuario(id_usuario):
     try:
         db.session.delete(usuario_objeto)
         db.session.commit()
+        usuario_json = usuario_objeto.to_json()
 
-        return jsonify({'Usuário': usuario_objeto.to_json()}, 'Usuário deletado com sucesso')
+        return jsonify(usuario_json)
     
     except Exception as erro:
-        return jsonify({'Usuário: '}, 'Erro ao deletar usuário')
+        return jsonify()
+    
+
+#Classe produtos
+class produtos(db.Model):
+    id_produto = db.Column(db.Integer, primary_key = True)
+    nome_produto = db.Column(db.String(100))
+    fk_id_restaurante = db.Column(db.Integer)
+
+    def to_json(self):
+        return {
+                'id_produto': self.id_produto,
+                'nome_produto': self.nome_produto,
+                'fk_id_restaurante': self.fk_id_restaurante
+                }
+
+@app.route('/produtos', methods = ['GET'])
+def seleciona_produtos():
+    produtos_objetos = produtos.query.all()
+    produtos_json = [produto.to_json() for produto in produtos_objetos]
+
+    return jsonify(produtos_json)
+
+@app.route('/produto/<id_produto>', methods = ['GET'])
+def seleciona_produto(id_produto):
+    produto_objeto = produtos.query.filter_by(id_produto = id_produto).first()
+    produto_json = produto_objeto.to_json()
+
+    return jsonify(produto_json)
     
 
 app.run()
