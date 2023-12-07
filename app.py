@@ -113,9 +113,10 @@ def deleta_usuario(id_usuario):
 class produtos(db.Model):
     '''Classe que define a tabela produtos do BD'''
     id_produto = db.Column(db.Integer, primary_key = True)
-    nome_produto = db.Column(db.String(100))
-    fk_id_restaurante = db.Column(db.Integer, db.ForeignKey('restaurantes.id_restaurante'))
-    restaurante = db.relationship('restaurantes', backref = 'produtos', foreign_keys = [fk_id_restaurante])
+    nome_produto = db.Column(db.String(98))
+    fk_id_restaurante = db.Column(db.Integer)
+    preco = db.Column(db.Float)
+    descricao = db.Column(db.String(298))
 
     def to_json(self):
         '''Retorna um produto no formato json'''
@@ -123,6 +124,8 @@ class produtos(db.Model):
                 'id_produto': self.id_produto,
                 'nome_produto': self.nome_produto,
                 'fk_id_restaurante': self.fk_id_restaurante
+                'preco': self.preco
+                'descricao': self.descricao
                 }
 
 @app.route('/produtos', methods = ['GET'])
@@ -147,7 +150,7 @@ def cria_produto():
     body = request.get_json()
 
     try:
-        produto_objeto = produtos(nome_produto = body['nome_produto'], fk_id_restaurante = body['fk_id_restaurante'])
+        produto_objeto = produtos(nome_produto = body['nome_produto'], fk_id_restaurante = body['fk_id_restaurante'], preco = body['preco'], descricao = body['descricao'])
         db.session.add(produto_objeto)
         db.session.commit()
         produto_json = produto_objeto.to_json()
@@ -170,8 +173,15 @@ def atualiza_produto(id_produto):
         if('nome_produto' in body):
             produto_objeto.nome_produto = body['nome_produto']
 
-        if('funcao' in body):
+        if('fk_id_restaurante' in body):
             produto_objeto.fk_id_restaurante = body['fk_id_restaurante']
+
+        if('preco' in body):
+            produto_objeto.preco= body['preco']
+
+        if('descricao' in body):
+            produto_objeto.descricao = body['descricao']
+
 
         db.session.add(produto_objeto)
         db.session.commit()
@@ -202,7 +212,7 @@ def deleta_produto(id_produto):
 class restaurantes(db.Model):
     '''Classe que define a tabela restaurantes do BD'''
     id_restaurante = db.Column(db.Integer, primary_key = True)
-    nome_restaurante = db.Column(db.String(100))
+    nome_restaurante = db.Column(db.String(98))
     distancia_totem = db.Column(db.Float)
 
     def to_json(self):
@@ -383,13 +393,15 @@ class pesquisas_restaurante(db.Model):
     id_pesquisa_restaurante = db.Column(db.Integer, primary_key = True)
     fk_id_usuario = db.Column(db.Integer)
     fk_id_restaurante = db.Column(db.Integer)
+    data = db.Column(date(db.String(50))) #não testei ainda
 
     def to_json(self):
         '''Retorna uma pesquisa por restaurante no formato json'''
         return {
             'id_pesquisa_restaurante': self.id_pesquisa_restaurante,
             'fk_id_usuario': self.fk_id_usuario,
-            'fk_id_restaurante': self.fk_id_restaurante
+            'fk_id_restaurante': self.fk_id_restaurante,
+            'data': self.data
         }
     
 
@@ -466,8 +478,66 @@ def deleta_pesquisa_restaurante(id_pesquisa_restaurante):
         return jsonify(erro)
 
 
+@app.route('/consultar_produto', methods=['GET'])
+def consultar_produto():
+    # Obter o nome do produto a ser consultado dos parâmetros da solicitação
+    nome_produto = request.args.get('nome_produto')
+
+    # Executar a consulta no banco de dados
+    query = "SELECT * FROM produtos WHERE nome = %s"
+    cursor.execute(query, (nome_produto,))
+
+    # Obter os resultados da consulta
+    resultados = cursor.fetchall()
+
+    # Criar uma lista de dicionários para os resultados
+    produtos = []
+    for resultado in resultados:
+        produto = {
+            'id_produto': resultado[0],
+            'nome_produto': resultado[1],
+            'fk_id_restaurante': resultado[2],
+            'preco': resultado[3],
+            'descricao': resultado[4],
+        }
+        produtos.append(produto)
+
+    # Fechar o cursor após a consulta
+    cursor.close()
+
+    # Retornar os resultados como JSON
+    return jsonify(produtos)
+
+
+@app.route('/consultar_restaurante', methods=['GET'])
+def consultar_restaurante():
     
-    
+    nome_restaurante = request.args.get('nome_restaurante')
+
+ 
+    query = "SELECT * FROM restaurantes WHERE nome = %s"
+    cursor.execute(query, (nome_restaurante,))
+
+    # Obter os resultados da consulta
+    resultados = cursor.fetchall()
+
+    # Criar uma lista de dicionários para os resultados
+    restaurantes = []
+    for resultado in resultados:
+        restaurante = {
+            'id_restaurante': resultado[0],
+            'nome_restaurante': resultado[1],
+            'distancia_totem':resultado[2]
+        }
+        restaurantes.append(restaurante)
+
+    # Fechar o cursor após a consulta
+    cursor.close()
+
+    # Retornar os resultados como JSON
+    return jsonify(restaurantes)
+
+
 #rotas de erro
 @app.errorhandler(404)
 def page_not_found(error):
