@@ -3,7 +3,7 @@ from app import app, db, usuarios, produtos, restaurantes, pesquisas_produto, pe
 
 # Configurar o aplicativo para testes
 app.config['TESTING'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://doadmin:AVNS_erI8p2wSSm0gckO83UU@banco-de-dados-mp-do-user-15247043-0.c.db.ondigitalocean.com:25060/teste'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://doadmin:AVNS_erI8p2wSSm0gckO83UU@banco-de-dados-mp-do-user-15247043-0.c.db.ondigitalocean.com:25060/defaultdb'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 client = app.test_client()
 
