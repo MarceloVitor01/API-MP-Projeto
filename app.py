@@ -41,7 +41,7 @@ def seleciona_usuarios():
 @app.route('/usuario/<id_usuario>', methods=['GET'])
 def seleciona_usuario(id_usuario):
     '''Seleciona um usuario com base no id_usuario'''
-    usuario_objeto = usuarios.query.filter_by(id_usuario = id_usuario).first()
+    usuario_objeto = usuarios.query.get(id_usuario)
     usuario_json = usuario_objeto.to_json()
     
     return jsonify(usuario_json)
@@ -65,7 +65,7 @@ def cria_usuario():
 @app.route('/usuario/<id_usuario>', methods = ['PUT'])    
 def atualiza_usuario(id_usuario):
     '''Atualiza um usuario com base no id_usuario'''
-    usuario_objeto = usuarios.query.filter_by(id_usuario = id_usuario).first()
+    usuario_objeto = usuarios.query.get(id_usuario)
     body = request.get_json()
 
     try:
@@ -96,7 +96,7 @@ def atualiza_usuario(id_usuario):
 @app.route('/usuario/<id_usuario>', methods = ['DELETE'])
 def deleta_usuario(id_usuario):
     '''Deleta um usuario com base no id_usuario'''
-    usuario_objeto = usuarios.query.filter_by(id_usuario = id_usuario).first()
+    usuario_objeto = usuarios.query.get(id_usuario)
     # if usuarios.funcao == "ADM":
     try:
         db.session.delete(usuario_objeto)
@@ -117,6 +117,7 @@ class produtos(db.Model):
     fk_id_restaurante = db.Column(db.Integer)
     preco = db.Column(db.Float)
     descricao = db.Column(db.String(298))
+    imagem = db.Column(db.String(500))
 
     def to_json(self):
         '''Retorna um produto no formato json'''
@@ -125,7 +126,8 @@ class produtos(db.Model):
                 'nome_produto': self.nome_produto,
                 'fk_id_restaurante': self.fk_id_restaurante,
                 'preco': self.preco,
-                'descricao': self.descricao
+                'descricao': self.descricao,
+                'imagem': self.imagem
                 }
 
 @app.route('/produtos', methods = ['GET'])
@@ -139,7 +141,7 @@ def seleciona_produtos():
 @app.route('/produto/<id_produto>', methods = ['GET'])
 def seleciona_produto(id_produto):
     '''Seleciona um produto com base no id_produto'''
-    produto_objeto = produtos.query.filter_by(id_produto = id_produto).first()
+    produto_objeto = produtos.query.get(id_produto)
     produto_json = produto_objeto.to_json()
 
     return jsonify(produto_json)
@@ -150,7 +152,7 @@ def cria_produto():
     body = request.get_json()
 
     try:
-        produto_objeto = produtos(nome_produto = body['nome_produto'], fk_id_restaurante = body['fk_id_restaurante'], preco = body['preco'], descricao = body['descricao'])
+        produto_objeto = produtos(nome_produto = body['nome_produto'], fk_id_restaurante = body['fk_id_restaurante'], preco = body['preco'], descricao = body['descricao'], imagem = body['imagem'])
         db.session.add(produto_objeto)
         db.session.commit()
         produto_json = produto_objeto.to_json()
@@ -163,7 +165,7 @@ def cria_produto():
 @app.route('/produto/<id_produto>', methods = ['PUT'])
 def atualiza_produto(id_produto):
     '''Atualiza um produto com base no id_produto'''
-    produto_objeto = produtos.query.filter_by(id_produto = id_produto).first()
+    produto_objeto = produtos.query.get(id_produto)
     body = request.get_json()
 
     try:
@@ -195,7 +197,7 @@ def atualiza_produto(id_produto):
 @app.route('/produto/<id_produto>', methods = ['DELETE'])
 def deleta_produto(id_produto):
     '''Deleta um produto com base no id_produto'''
-    produto_objeto = produtos.query.filter_by(id_produto = id_produto).first()
+    produto_objeto = produtos.query.get(id_produto)
 
     try:
         db.session.delete(produto_objeto)
@@ -214,13 +216,15 @@ class restaurantes(db.Model):
     id_restaurante = db.Column(db.Integer, primary_key = True)
     nome_restaurante = db.Column(db.String(98))
     distancia_totem = db.Column(db.Float)
+    logo = db.Column(db.String(500))
 
     def to_json(self):
         '''Retorna um restaurante no formato json'''
         return {
                 'id_restaurante': self.id_restaurante,
                 'nome_restaurante': self.nome_restaurante,
-                'distancia_totem': self.distancia_totem
+                'distancia_totem': self.distancia_totem,
+                'logo': self.logo
                 }
 
 
@@ -235,7 +239,7 @@ def seleciona_restaurantes():
 @app.route('/restaurante/<id_restaurante>', methods = ['GET'])
 def seleciona_restaurante(id_restaurante):
     '''Seleciona um restaurante com base no id_restaurante'''
-    restaurante_objeto = restaurantes.query.filter_by(id_restaurante = id_restaurante).first()
+    restaurante_objeto = restaurantes.query.get(id_restaurante)
     restaurante_json = restaurante_objeto.to_json()
 
     return jsonify(restaurante_json)
@@ -246,7 +250,7 @@ def cria_restaurante():
     body = request.get_json()
 
     try:
-        restaurante_objeto = restaurantes(nome_restaurante = body['nome_restaurante'], distancia_totem = body['distancia_totem'])
+        restaurante_objeto = restaurantes(nome_restaurante = body['nome_restaurante'], distancia_totem = body['distancia_totem'], logo = body['logo'])
         db.session.add(restaurante_objeto)
         db.session.commit()
         restaurante_json = restaurante_objeto.to_json()
@@ -259,7 +263,7 @@ def cria_restaurante():
 @app.route('/restaurante/<id_restaurante>', methods = ['PUT'])
 def atualiza_restaurante(id_restaurante):
     '''Atualiza um restaurante com base no id_restaurante'''
-    restaurante_objeto = restaurantes.query.filter_by(id_restaurante = id_restaurante).first()
+    restaurante_objeto = restaurantes.query.get(id_restaurante)
     body = request.get_json()
 
     try:
@@ -284,7 +288,7 @@ def atualiza_restaurante(id_restaurante):
 @app.route('/restaurante/<id_restaurante>', methods = ['DELETE'])
 def deleta_restaurante(id_restaurante):
     '''Deleta um restaurante com base no id_restaurante'''
-    restaurante_objeto = restaurantes.query.filter_by(id_restaurante = id_restaurante).first()
+    restaurante_objeto = restaurantes.query.get(id_restaurante)
 
     try:
         db.session.delete(restaurante_objeto)
@@ -325,7 +329,7 @@ def seleciona_pesquisas_produto():
 @app.route('/pesquisa_produto/<id_pesquisa_produto>', methods = ['GET'])
 def seleciona_pesquisa_produto(id_pesquisa_produto):
     '''Seleciona uma pesquisa por produto com base no id_pesquisa_produto'''
-    pesquisa_produto_objeto = pesquisas_produto.query.filter_by(id_pesquisa_produto = id_pesquisa_produto).first()
+    pesquisa_produto_objeto = pesquisas_produto.query.get(id_pesquisa_produto)
     pesquisa_produto_json = pesquisa_produto_objeto.to_json()
 
     return jsonify(pesquisa_produto_json)
@@ -374,7 +378,7 @@ def atualiza_pesquisa_produto(id_pesquisa_produto):
 @app.route('/pesquisa_produto/<id_pesquisa_produto>')
 def deleta_pesquisa_produto(id_pesquisa_produto):
     '''Deleta uma pesquisa por produto com base no id_pesquisa_produto'''
-    pesquisa_produto_objeto = pesquisas_produto.query.filter_by(id_pesquisa_produto = id_pesquisa_produto).first()
+    pesquisa_produto_objeto = pesquisas_produto.query.get(id_pesquisa_produto)
 
     try:
         db.session.delete(pesquisa_produto_objeto)
@@ -393,7 +397,7 @@ class pesquisas_restaurante(db.Model):
     id_pesquisa_restaurante = db.Column(db.Integer, primary_key = True)
     fk_id_usuario = db.Column(db.Integer)
     fk_id_restaurante = db.Column(db.Integer)
-    data = db.Column(db.String(50))
+    date = db.Column(db.String(50))
 
     def to_json(self):
         '''Retorna uma pesquisa por restaurante no formato json'''
@@ -416,7 +420,7 @@ def seleciona_pesquisas_restaurante():
 @app.route('/pesquisa_restaurante/<id_pesquisa_restaurante>', methods = ['GET'])
 def seleciona_pesquisa_restaurante(id_pesquisa_restaurante):
     '''Seleciona uma pesquisa por restaurante com base no id_pesquisa_restaurante'''
-    pesquisa_restaurante_objeto = pesquisas_restaurante.query.filter_by(id_pesquisa_restaurante = id_pesquisa_restaurante).first()
+    pesquisa_restaurante_objeto = pesquisas_restaurante.query.get(id_pesquisa_restaurante)
     pesquisa_restaurante_json = pesquisa_restaurante_objeto.to_json()
 
     return jsonify(pesquisa_restaurante_json)
@@ -478,24 +482,62 @@ def deleta_pesquisa_restaurante(id_pesquisa_restaurante):
         return jsonify(erro)
 
 
-@app.route('/consultar_produto/<nome_produto>', methods=['GET'])
-def consultar_produto(nome_produto):
-    #seleciona um produto baseado no nome
-    produto_objeto = produtos.query.filter_by(nome_produto = nome_produto)
-    produtos_json = produto_objeto.to_json()
+@app.route('/pesquisar_restaurantes/<nome_restaurante>', methods=['GET'])
+def pesquisar_restaurante(nome_restaurante):
+    #Seleciona restaurantes com base no nome
+    restaurantes_pelo_nome = restaurantes.query.filter_by(nome_restaurante = nome_restaurante)
+    restaurantes_pelo_nome_json = [restaurante.to_json() for restaurante in restaurantes_pelo_nome]
 
-    return jsonify(produtos_json)
+    return jsonify(restaurantes_pelo_nome_json)
+
+@app.route('/pesquisar_prato/<nome_produto>', methods=['GET'])
+def pesquisar_prato(nome_produto):
+    #Seleciona pratos com base no nome
+    produtos_pelo_nome = produtos.query.filter_by(nome_produto = nome_produto)
+    produtos_pelo_nome_json = [produto.to_json() for produto in produtos_pelo_nome]
+
+    return jsonify(produtos_pelo_nome_json)
+
+@app.route('/filtrar_maior_distancia', methods=['GET'])
+def filtrar_maior_distancia():
+    #Lista os produtos em ordem descrescente de distância do restaurante
+    restaurantes_menor_dist = restaurantes.query.order_by(restaurantes.distancia_totem)
+    restaurantes_maior_dist = []
+
+    for i in range(len(restaurantes_menor_dist)-1, -1, -1):
+        restaurantes_maior_dist.append(restaurantes_menor_dist[i])
+
+    restaurantes_ordenados_json = [restaurante_dist.to_json() for restaurante_dist in restaurantes_maior_dist]
+    return jsonify(restaurantes_ordenados_json)
+
+@app.route('/filtrar_menor_distancia', methods=['GET'])
+def filtrar_menor_distancia():
+    #Lista os produtos em ordem ascendente de distância do restaurante
+    restaurantes_menor_dist = restaurantes.query.order_by(restaurantes.distancia_totem)
+
+    restaurantes_ordenados_json = [restaurante_dist.to_json() for restaurante_dist in restaurantes_menor_dist]
+    return jsonify(restaurantes_ordenados_json)
 
 
-@app.route('/consultar_restaurante/<nome_restaurante>', methods=['GET'])
-def consultar_restaurante(nome_restaurante):
-    #seleciona um restaurante baseado no nome
-    restaurante_objeto = restaurantes.query.filter_by(nome_restaurante = nome_restaurante)
-    restaurantes_json = restaurante_objeto.to_json()
+@app.route('/filtrar_menor_preco', methods=['GET'])
+def filtrar_menor_preco():
+    #Lista os produtos em ordem de menor preço
+    produtos_menor_preco = produtos.query.order_by(produtos.distancia_totem)
 
-    return jsonify(restaurantes_json)
-    
+    produtos_ordenados_json = [produto_barato.to_json() for produto_barato in produtos_menor_preco]
+    return jsonify(produtos_ordenados_json)
 
+@app.route('/filtrar_maior_preco', methods=['GET'])
+def filtrar_maior_preco():
+    #Lista os produtos em ordem de maior preço
+    produtos_menor_preco = produtos.query.order_by(produtos.distancia_totem)
+    produtos_maior_preco = []
+
+    for i in range(len(produtos_menor_preco)-1, -1, -1):
+        produtos_maior_preco.append(produtos_menor_preco[i])
+
+    produtos_ordenados_json = [produto_caro.to_json() for produto_caro in produtos_maior_preco]
+    return jsonify(produtos_ordenados_json)
 
 #rotas de erro
 @app.errorhandler(404)
