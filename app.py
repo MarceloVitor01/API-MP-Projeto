@@ -117,7 +117,7 @@ class produtos(db.Model):
     fk_id_restaurante = db.Column(db.Integer)
     preco = db.Column(db.Float)
     descricao = db.Column(db.String(298))
-    imagem = db.Column(db.String(500))
+    imagem = db.Column(db.Text)
 
     def to_json(self):
         '''Retorna um produto no formato json'''
@@ -216,7 +216,7 @@ class restaurantes(db.Model):
     id_restaurante = db.Column(db.Integer, primary_key = True)
     nome_restaurante = db.Column(db.String(98))
     distancia_totem = db.Column(db.Float)
-    logo = db.Column(db.String(500))
+    logo = db.Column(db.Text)
 
     def to_json(self):
         '''Retorna um restaurante no formato json'''
