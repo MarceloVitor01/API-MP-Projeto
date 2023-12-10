@@ -152,7 +152,7 @@ def cria_produto():
     body = request.get_json()
 
     try:
-        produto_objeto = produtos(nome_produto = body['nome_produto'], fk_id_restaurante = body['fk_id_restaurante'], preco = body['preco'], descricao = body['descricao'], imagem = body['imagem'])
+        produto_objeto = produtos(nome_produto = body['nome_produto'], fk_id_restaurante = body['fk_id_restaurante'], preco = body['preco'], descricao = body['descricao'], url_imagem = body['url_imagem'])
         db.session.add(produto_objeto)
         db.session.commit()
         produto_json = produto_objeto.to_json()
@@ -250,7 +250,7 @@ def cria_restaurante():
     body = request.get_json()
 
     try:
-        restaurante_objeto = restaurantes(nome_restaurante = body['nome_restaurante'], distancia_totem = body['distancia_totem'], logo = body['logo'])
+        restaurante_objeto = restaurantes(nome_restaurante = body['nome_restaurante'], distancia_totem = body['distancia_totem'], url_logo = body['url_logo'])
         db.session.add(restaurante_objeto)
         db.session.commit()
         restaurante_json = restaurante_objeto.to_json()
