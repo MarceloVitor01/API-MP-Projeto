@@ -4,5 +4,5 @@ mysql-connector-python
 mysqlclient
 flask-cors
 pytest
-hashlib
 pytest-cov
+gunicorn
