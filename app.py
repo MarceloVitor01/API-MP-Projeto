@@ -302,7 +302,6 @@ def deleta_restaurante(id_restaurante):
     
 
 #-----------------------------------Pesquisas Produtos-----------------------------------
-
 class pesquisas_produto(db.Model):
     '''Classe que define uma pesquisa por produto no BD'''
     id_pesquisa_produto = db.Column(db.Integer, primary_key = True)
@@ -482,13 +481,16 @@ def deleta_pesquisa_restaurante(id_pesquisa_restaurante):
         return jsonify(erro)
 
 
-@app.route('/pesquisar_restaurante/<nome_restaurante>', methods=['GET'])
+@app.route('/pesquisa_restaurante/<nome_restaurante>', methods=['GET'])
 def pesquisar_restaurante(nome_restaurante):
     #Seleciona restaurantes com base no nome
     restaurantes_pelo_nome = restaurantes.query.filter_by(nome_restaurante = nome_restaurante)
     restaurantes_pelo_nome_json = [restaurante.to_json() for restaurante in restaurantes_pelo_nome]
 
     return jsonify(restaurantes_pelo_nome_json)
+
+
+
 
 @app.route('/pesquisar_prato/<nome_produto>', methods=['GET'])
 def pesquisar_prato(nome_produto):
