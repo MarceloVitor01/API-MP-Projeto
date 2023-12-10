@@ -256,7 +256,7 @@ class restaurantes(db.Model):
                 'distancia_totem': self.distancia_totem,
                 'url_logo': self.url_logo,
                 'login': self.login,
-                'senha': self.senha
+                'senha': self.senha,
                 'url_logo': self.url_logo,
                 'login': self.login,
                 'senha': self.senha
@@ -433,7 +433,7 @@ def atualiza_pesquisa_produto(id_pesquisa_produto):
     except Exception as erro:
         return jsonify(erro)
     
-@app.route('/pesquisa_produto/<id_pesquisa_produto>')
+@app.route('/pesquisa_produto/<id_pesquisa_produto>', methods = ['DELETE'])
 def deleta_pesquisa_produto(id_pesquisa_produto):
     '''Deleta uma pesquisa por produto com base no id_pesquisa_produto'''
     pesquisa_produto_objeto = pesquisas_produto.query.get(id_pesquisa_produto)
@@ -524,7 +524,7 @@ def atualiza_pesquisa_restaurante(id_pesquisa_restaurante):
     except Exception as erro:
         return jsonify(erro)
     
-@app.route('/pesquisa_restaurante/<id_pesquisa_restaurante>')
+@app.route('/pesquisa_restaurante/<id_pesquisa_restaurante>', methods = ['DELETE'])
 def deleta_pesquisa_restaurante(id_pesquisa_restaurante):
     '''Deleta uma pesquisa por restaurante com base no id_pesquisa_restaurante'''
     pesquisa_restaurante_objeto = pesquisas_restaurante.query.filter_by(id_pesquisa_restaurante = id_pesquisa_restaurante).first()
