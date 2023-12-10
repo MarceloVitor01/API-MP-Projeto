@@ -117,7 +117,7 @@ class produtos(db.Model):
     fk_id_restaurante = db.Column(db.Integer)
     preco = db.Column(db.Float)
     descricao = db.Column(db.String(298))
-    imagem = db.Column(db.Text)
+    url_imagem = db.Column(db.Text)
 
     def to_json(self):
         '''Retorna um produto no formato json'''
@@ -127,12 +127,12 @@ class produtos(db.Model):
                 'fk_id_restaurante': self.fk_id_restaurante,
                 'preco': self.preco,
                 'descricao': self.descricao,
-                'imagem': self.imagem
+                'url_imagem': self.url_imagem
                 }
 
 @app.route('/produtos', methods = ['GET'])
 def seleciona_produtos():
-    '''Sleciona todos os produtos'''
+    #Seeciona todos os produtos
     produtos_objetos = produtos.query.all()
     produtos_json = [produto.to_json() for produto in produtos_objetos]
 
@@ -216,7 +216,7 @@ class restaurantes(db.Model):
     id_restaurante = db.Column(db.Integer, primary_key = True)
     nome_restaurante = db.Column(db.String(98))
     distancia_totem = db.Column(db.Float)
-    logo = db.Column(db.Text)
+    url_logo = db.Column(db.Text)
 
     def to_json(self):
         '''Retorna um restaurante no formato json'''
@@ -224,7 +224,7 @@ class restaurantes(db.Model):
                 'id_restaurante': self.id_restaurante,
                 'nome_restaurante': self.nome_restaurante,
                 'distancia_totem': self.distancia_totem,
-                'logo': self.logo
+                'url_logo': self.url_logo
                 }
 
 
