@@ -42,12 +42,12 @@ def login():
     senha = request.json.get('senha')
 
     usuario = usuarios.query.filter_by(login=login).first()
-    if usuario and usuario.check_password(senha):
+    if usuario and usuario.senha == sha256(senha.encode('utf-8')).hexdigest():
         # Autenticação bem-sucedida
-        return jsonify({'authenticated': True, 'id_usuario': usuario.id_usuario})
+        return jsonify({'authenticated': True, 'id_usuario': usuario.id_usuario}), 200
     else:
         # Autenticação falhou
-        return jsonify({'authenticated': False}), 401
+        return jsonify('Usario ou Senha Inválida'), 401
 
 @app.route('/usuario', methods=['GET'])
 def seleciona_usuarios():
@@ -77,7 +77,7 @@ def cria_usuario():
         db.session.commit()
         usuario_json = usuario_objeto.to_json()
 
-        return jsonify(usuario_json)
+        return jsonify(usuario_json), 201
     
     except Exception as erro:
         return jsonify(erro)
