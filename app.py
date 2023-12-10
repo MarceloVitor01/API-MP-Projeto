@@ -66,13 +66,11 @@ def seleciona_usuario(id_usuario):
 def cria_usuario():
     '''Cria um novo usuario'''
     body = request.get_json()
-    print(body)
 
     try:
 
         login_existente = usuarios.query.filter_by(login=body['login']).first()
 
-        print(login_existente)
         
         if login_existente:
             return jsonify({'error': 'Login já existe'}), 409
