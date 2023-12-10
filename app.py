@@ -295,9 +295,11 @@ def cria_restaurante():
 
     try:
         login_existente = restaurantes.query.filter_by(login = body['login']).first()
-
+        qtd_restaurantes = len(restaurantes.query.all())
         if login_existente:
             return jsonify({'error': 'Login já existe'}), 409
+        if qtd_restaurantes>17:
+            return jsonify({'error': 'Já existem 18 restaurantes, o limite da praça de alimentação.'}), 409
 
         restaurante_objeto = restaurantes(nome_restaurante = body['nome_restaurante'], distancia_totem = body['distancia_totem'], url_logo = body['url_logo'], login = body['login'])
         restaurante_objeto.set_senha(body['senha']) #Criptografando a senha
