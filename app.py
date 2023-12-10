@@ -30,7 +30,7 @@ class usuarios(db.Model):
                 }
     
 
-@app.route('/usuarios', methods=['GET'])
+@app.route('/usuario', methods=['GET'])
 def seleciona_usuarios():
     '''Seleciona todos os usuarios'''
     usuarios_objetos = usuarios.query.all()
@@ -46,7 +46,7 @@ def seleciona_usuario(id_usuario):
     
     return jsonify(usuario_json)
 
-@app.route('/usuarios', methods=['POST'])
+@app.route('/usuario', methods=['POST'])
 def cria_usuario():
     '''Cria um novo usuario'''
     body = request.get_json()
@@ -130,7 +130,7 @@ class produtos(db.Model):
                 'url_imagem': self.url_imagem
                 }
 
-@app.route('/produtos', methods = ['GET'])
+@app.route('/produto', methods = ['GET'])
 def seleciona_produtos():
     #Seeciona todos os produtos
     produtos_objetos = produtos.query.all()
@@ -146,7 +146,7 @@ def seleciona_produto(id_produto):
 
     return jsonify(produto_json)
 
-@app.route('/produtos', methods = ['POST'])
+@app.route('/produto', methods = ['POST'])
 def cria_produto():
     '''Cria um novo produto'''
     body = request.get_json()
@@ -228,7 +228,7 @@ class restaurantes(db.Model):
                 }
 
 
-@app.route('/restaurantes', methods = ['GET'])
+@app.route('/restaurante', methods = ['GET'])
 def seleciona_restaurantes():
     '''Seleciona todos os restaurantes'''
     restaurantes_objetos = restaurantes.query.all()
@@ -244,7 +244,7 @@ def seleciona_restaurante(id_restaurante):
 
     return jsonify(restaurante_json)
 
-@app.route('/restaurantes', methods = ['POST'])
+@app.route('/restaurante', methods = ['POST'])
 def cria_restaurante():
     '''Cria um novo restaurante'''
     body = request.get_json()
@@ -318,7 +318,7 @@ class pesquisas_produto(db.Model):
         }
     
 
-@app.route('/pesquisas_produto', methods = ['GET'])
+@app.route('/pesquisa_produto', methods = ['GET'])
 def seleciona_pesquisas_produto():
     '''Seleciona todas as pesquisas por produto'''
     pesquisas_produto_objetos = pesquisas_produto.query.all()
@@ -334,7 +334,7 @@ def seleciona_pesquisa_produto(id_pesquisa_produto):
 
     return jsonify(pesquisa_produto_json)
 
-@app.route('/pesquisas_produto', methods = ['POST'])
+@app.route('/pesquisa_produto', methods = ['POST'])
 def cria_pesquisa_produto():
     '''Cria uma nova pesquisa por produto'''
     body = request.get_json()
@@ -409,7 +409,7 @@ class pesquisas_restaurante(db.Model):
         }
     
 
-@app.route('/pesquisas_restaurante', methods = ['GET'])
+@app.route('/pesquisa_restaurante', methods = ['GET'])
 def seleciona_pesquisas_restaurante():
     '''Seleciona todas as pesquisas por restaurante'''
     pesquisas_restaurante_objetos = pesquisas_restaurante.query.all()
@@ -425,7 +425,7 @@ def seleciona_pesquisa_restaurante(id_pesquisa_restaurante):
 
     return jsonify(pesquisa_restaurante_json)
 
-@app.route('/pesquisas_restaurante', methods = ['POST'])
+@app.route('/pesquisa_restaurante', methods = ['POST'])
 def cria_pesquisa_restaurante():
     '''Cria uma nova pesquisa por restaurante'''
     body = request.get_json()
@@ -482,7 +482,7 @@ def deleta_pesquisa_restaurante(id_pesquisa_restaurante):
         return jsonify(erro)
 
 
-@app.route('/pesquisar_restaurantes/<nome_restaurante>', methods=['GET'])
+@app.route('/pesquisar_restaurante/<nome_restaurante>', methods=['GET'])
 def pesquisar_restaurante(nome_restaurante):
     #Seleciona restaurantes com base no nome
     restaurantes_pelo_nome = restaurantes.query.filter_by(nome_restaurante = nome_restaurante)
