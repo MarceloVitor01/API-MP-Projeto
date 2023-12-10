@@ -256,9 +256,6 @@ class restaurantes(db.Model):
                 'distancia_totem': self.distancia_totem,
                 'url_logo': self.url_logo,
                 'login': self.login,
-                'senha': self.senha,
-                'url_logo': self.url_logo,
-                'login': self.login,
                 'senha': self.senha
                 }
 
