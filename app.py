@@ -247,13 +247,16 @@ class restaurantes(db.Model):
 
     def set_senha(self, senha: str):
         self.senha = sha256(senha.encode('utf-8')).hexdigest()
+
     def to_json(self):
         '''Retorna um restaurante no formato json'''
         return {
                 'id_restaurante': self.id_restaurante,
                 'nome_restaurante': self.nome_restaurante,
                 'distancia_totem': self.distancia_totem,
-                'url_logo': self.url_logo
+                'url_logo': self.url_logo,
+                'login': self.login,
+                'senha': self.senha
                 }
 
 @app.route('/loginRestaurante', methods=['POST'])
@@ -261,8 +264,8 @@ def login():
     login = request.json.get('login')
     senha = request.json.get('senha')
 
-    resturante = restaurantes.query.filter_by(login=login).first()
-    if restaurante and restaurante.senha == sha256(senha.encode('utf-8')).hexdigest():
+    restaurante = restaurantes.query.filter_by(login = login).first()
+    if restaurante and restaurantes.senha == sha256(senha.encode('utf-8')).hexdigest():
         # Autenticação bem-sucedida
         return jsonify({'authenticated': True, 'id_restaurante': restaurante.id_restaurante}), 200
     else:
@@ -291,7 +294,13 @@ def cria_restaurante():
     body = request.get_json()
 
     try:
-        restaurante_objeto = restaurantes(nome_restaurante = body['nome_restaurante'], distancia_totem = body['distancia_totem'], url_logo = body['url_logo'])
+        login_existente = restaurantes.query.filter_by(login = body['login']).first()
+
+        if login_existente:
+            return jsonify({'error': 'Login já existe'}), 409
+
+        restaurante_objeto = restaurantes(nome_restaurante = body['nome_restaurante'], distancia_totem = body['distancia_totem'], url_logo = body['url_logo'], login = body['login'])
+        restaurante_objeto.set_senha(body['senha']) #Criptografando a senha
         db.session.add(restaurante_objeto)
         db.session.commit()
         restaurante_json = restaurante_objeto.to_json()
@@ -316,6 +325,12 @@ def atualiza_restaurante(id_restaurante):
 
         if('distancia_totem' in body):
             restaurante_objeto.distancia_totem = body['distancia_totem']
+
+        if('login' in body):
+            restaurante_objeto.login = body['login']
+
+        if('senha' in body):
+            restaurante_objeto.senha = body['senha']
 
         db.session.add(restaurante_objeto)
         db.session.commit()
