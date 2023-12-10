@@ -41,11 +41,12 @@ def login():
     usuario = usuarios.query.filter_by(login=login).first()
     if usuario and usuario.senha == sha256(senha.encode('utf-8')).hexdigest():
         # Autenticação bem-sucedida
-        return jsonify({'authenticated': True, 'id_usuario': usuario.id_usuario}), 200
+        return jsonify({'authenticated': True, 'id_usuario': usuario.id_usuario, 'funcao': usuario.funcao}), 200
     else:
         # Autenticação falhou
         return jsonify('Usario ou Senha Inválida'), 401
 
+    
 @app.route('/usuario', methods=['GET'])
 def seleciona_usuarios():
     '''Seleciona todos os usuarios'''
@@ -241,7 +242,11 @@ class restaurantes(db.Model):
     nome_restaurante = db.Column(db.String(98))
     distancia_totem = db.Column(db.Float)
     url_logo = db.Column(db.Text)
+    login = db.Column(db.String(98))
+    senha = db.Column(db.String(98))
 
+    def set_senha(self, senha: str):
+        self.senha = sha256(senha.encode('utf-8')).hexdigest()
     def to_json(self):
         '''Retorna um restaurante no formato json'''
         return {
@@ -251,7 +256,19 @@ class restaurantes(db.Model):
                 'url_logo': self.url_logo
                 }
 
+@app.route('/loginRestaurante', methods=['POST'])
+def login():
+    login = request.json.get('login')
+    senha = request.json.get('senha')
 
+    resturante = restaurantes.query.filter_by(login=login).first()
+    if restaurante and restaurante.senha == sha256(senha.encode('utf-8')).hexdigest():
+        # Autenticação bem-sucedida
+        return jsonify({'authenticated': True, 'id_restaurante': restaurante.id_restaurante}), 200
+    else:
+        # Autenticação falhou
+        return jsonify('Login ou Senha Inválida'), 401
+    
 @app.route('/restaurante', methods = ['GET'])
 def seleciona_restaurantes():
     '''Seleciona todos os restaurantes'''
