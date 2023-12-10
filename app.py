@@ -24,9 +24,6 @@ class usuarios(db.Model):
     def set_senha(self, senha: str):
         self.senha = sha256(senha.encode('utf-8')).hexdigest()
 
-    def checa_senha(self, senha: str):
-        return self.senha == sha256(senha.encode('utf-8')).hexdigest()
-
     def to_json(self):
         '''Retorna um usuario no formato json'''
         return {'id_usuario': self.id_usuario,
@@ -69,8 +66,17 @@ def seleciona_usuario(id_usuario):
 def cria_usuario():
     '''Cria um novo usuario'''
     body = request.get_json()
+    print(body)
 
     try:
+
+        login_existente = usuarios.query.filter_by(login=body['login']).first()
+
+        print(login_existente)
+        
+        if login_existente:
+            return jsonify({'error': 'Login já existe'}), 409
+        
         usuario_objeto = usuarios(nome_usuario = body['nome_usuario'], funcao = body['funcao'], login = body['login'])
         usuario_objeto.set_senha(body['senha']) #Criptografando a senha
         db.session.add(usuario_objeto)
