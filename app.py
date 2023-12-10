@@ -570,5 +570,8 @@ def filtrar_maior_preco():
 def page_not_found(error):
     return render_template('page_not_found.html')
 
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('internal_server_error.html')
 
 app.run()
