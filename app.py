@@ -2,6 +2,7 @@ from flask import Flask, jsonify, Response, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 import mysql.connector as connector
 from flask_cors import CORS
+from hashlib import sha256;
 import json
 
 app = Flask(__name__)
@@ -20,6 +21,12 @@ class usuarios(db.Model):
     login = db.Column(db.String(98))
     senha = db.Column(db.String(98))
 
+    def set_senha(self, senha: str):
+        self.senha = sha256(senha.encode('utf-8')).hexdigest()
+
+    def checa_senha(self, senha: str):
+        return self.senha == sha256(senha.encode('utf-8')).hexdigest()
+
     def to_json(self):
         '''Retorna um usuario no formato json'''
         return {'id_usuario': self.id_usuario,
@@ -27,8 +34,20 @@ class usuarios(db.Model):
                 'funcao': self.funcao,
                 'login': self.login,
                 'senha': self.senha
-                }
-    
+                } 
+
+@app.route('/login', methods=['POST'])
+def login():
+    login = request.json.get('login')
+    senha = request.json.get('senha')
+
+    usuario = usuarios.query.filter_by(login=login).first()
+    if usuario and usuario.check_password(senha):
+        # Autenticação bem-sucedida
+        return jsonify({'authenticated': True, 'id_usuario': usuario.id_usuario})
+    else:
+        # Autenticação falhou
+        return jsonify({'authenticated': False}), 401
 
 @app.route('/usuario', methods=['GET'])
 def seleciona_usuarios():
@@ -52,7 +71,8 @@ def cria_usuario():
     body = request.get_json()
 
     try:
-        usuario_objeto = usuarios(nome_usuario = body['nome_usuario'], funcao = body['funcao'], login = body['login'], senha = body['senha'])
+        usuario_objeto = usuarios(nome_usuario = body['nome_usuario'], funcao = body['funcao'], login = body['login'])
+        usuario_objeto.set_senha(body['senha']) #Criptografando a senha
         db.session.add(usuario_objeto)
         db.session.commit()
         usuario_json = usuario_objeto.to_json()
