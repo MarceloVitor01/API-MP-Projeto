@@ -19,7 +19,7 @@ class usuarios(db.Model):
     nome_usuario = db.Column(db.String(98))
     funcao = db.Column(db.String(98))
     login = db.Column(db.String(98))
-    senha = db.Column(db.String(98))
+    senha = db.Column(db.Text)
 
     def set_senha(self, senha: str):
         self.senha = sha256(senha.encode('utf-8')).hexdigest()
@@ -44,7 +44,7 @@ def login():
         return jsonify({'authenticated': True, 'id_usuario': usuario.id_usuario, 'funcao': usuario.funcao}), 200
     else:
         # Autenticação falhou
-        return jsonify('Usario ou Senha Inválida'), 401
+        return jsonify('Usario e/ou Senha Inválida, ou caixa de função não foi preenchida'), 401
 
     
 @app.route('/usuario', methods=['GET'])
@@ -243,7 +243,7 @@ class restaurantes(db.Model):
     distancia_totem = db.Column(db.Float)
     url_logo = db.Column(db.Text)
     login = db.Column(db.String(98))
-    senha = db.Column(db.String(98))
+    senha = db.Column(db.Text)
 
     def set_senha(self, senha: str):
         self.senha = sha256(senha.encode('utf-8')).hexdigest()
@@ -257,10 +257,13 @@ class restaurantes(db.Model):
                 'url_logo': self.url_logo,
                 'login': self.login,
                 'senha': self.senha
+                'url_logo': self.url_logo,
+                'login': self.login,
+                'senha': self.senha
                 }
 
-@app.route('/loginRestaurante', methods=['POST'])
-def login():
+@app.route('/login_restaurante', methods=['POST'])
+def login_restaurante():
     login = request.json.get('login')
     senha = request.json.get('senha')
 
