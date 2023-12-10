@@ -265,7 +265,7 @@ def login_restaurante():
     senha = request.json.get('senha')
 
     restaurante = restaurantes.query.filter_by(login = login).first()
-    if restaurante and restaurante.senha == sha256(senha.encode('utf-8')).hexdigest():
+    if restaurante and restaurantes.senha == sha256(senha.encode('utf-8')).hexdigest():
         # Autenticação bem-sucedida
         return jsonify({'authenticated': True, 'id_restaurante': restaurante.id_restaurante}), 200
     else:
@@ -608,6 +608,4 @@ def page_not_found(error):
 def internal_error(error):
     return render_template('internal_server_error.html')
 
-
-if __name__ == '__main__':
-    app.run()
+app.run()
