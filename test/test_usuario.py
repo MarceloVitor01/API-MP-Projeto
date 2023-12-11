@@ -26,5 +26,5 @@ def test_deleta_usuario(client):
     assert response.status_code == 200
 
 def test_seleciona_usuario(client):
-    response = client.get('/ususario/1')
+    response = client.get('/usuario/1')
     assert response.status_code == 200
