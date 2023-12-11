@@ -4,13 +4,13 @@ from flask_sqlalchemy import SQLAlchemy
 from app import app, db, usuarios, produtos, restaurantes, pesquisas_produto, pesquisas_restaurante
 
 # Configurar o aplicativo para testes
-app.config['TESTING'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://doadmin:AVNS_erI8p2wSSm0gckO83UU@banco-de-dados-mp-do-user-15247043-0.c.db.ondigitalocean.com:25060/teste_db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-client = app.test_client()
-
-def test_app(client):
-    with client as client:
+@pytest.fixture
+def client():
+    app.config['TESTING'] = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://doadmin:AVNS_erI8p2wSSm0gckO83UU@banco-de-dados-mp-do-user-15247043-0.c.db.ondigitalocean.com:25060/bd_for_test'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    
+    with app.test_client() as client:
         yield client
 
 ####################################################################################
@@ -29,7 +29,7 @@ def test_seleciona_usuario(client):
     assert json_data["nome_usuario"] == "Alan"
     assert json_data['login'] == 'alan@gmail.com'
 
-'''def test_atualiza_usuario(client):
+def test_atualiza_usuario(client):
     response = client.put("/usuario/1", json={"nome_usuario": "Beltrano"})
     assert response.status_code == 200
     json_data = response.get_json()
@@ -151,12 +151,4 @@ def test_filtrar_menor_distancia(client):
     json_data = response.get_json()
     assert len(json_data) > 0
     for restaurante in json_data:
-        assert restaurante["distancia_totem"] > 0'''
-
-test_app(client)
-test_cria_usuario(client)
-test_seleciona_usuario(client)
-'''test_atualiza_usuario(client)
-test_login_certo_usuario(client)
-test_login_errado_usuario(client)
-test_deleta_usuario(client)'''
+        assert restaurante["distancia_totem"] > 0
