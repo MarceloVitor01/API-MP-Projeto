@@ -608,4 +608,6 @@ def page_not_found(error):
 def internal_error(error):
     return render_template('internal_server_error.html')
 
-app.run()
+
+if __name__ == '__main__':
+    app.run()
